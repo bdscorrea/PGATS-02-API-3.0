@@ -15,10 +15,11 @@ describe('Transfer Controller', () => {
             const resposta = await request(app)
                 .post('/transfer')
                 .send({
-                      from: "julio",
+                      from: "teste1",
                       to: "priscila",
                       value: 200
                     });
+            
         expect(resposta.status).to.equal(400);
         expect(resposta.body).to.have.property('error', 'Usuário remetente ou destinatário não encontrado');
         });
@@ -30,11 +31,13 @@ describe('Transfer Controller', () => {
 
             const resposta = await request(app)
                 .post('/transfer')
+                .set('authorization', `Bearer ${token}`)
                 .send({
-                    from: "teste",
+                    from: "teste1",
                     to: "priscila",
                     value: 200
                 });
+                
             expect(resposta.status).to.equal(400);
             expect(resposta.body).to.have.property('error', 'Usuário remetente ou destinatário não encontrado');
             
@@ -45,7 +48,7 @@ describe('Transfer Controller', () => {
             //mocar apenas a função transfers do Service
             const transferServiceMock = sinon.stub(transferService, 'transfer');
             transferServiceMock.returns({ 
-                from: "bea",
+                from: "teste1",
                 to: "bea",
                 value: 100
             });
@@ -53,7 +56,7 @@ describe('Transfer Controller', () => {
             const resposta = await request(app)
                 .post('/transfer')
                 .send({
-                    from: "bea",
+                    from: "teste1",
                     to: "bea",
                     value: 100
                 });
