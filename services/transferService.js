@@ -7,7 +7,7 @@ function transfer({ from, to, value }) {
   if (!sender || !recipient) return { error: 'Usuário remetente ou destinatário não encontrado' };
   if (sender.saldo < value) return { error: 'Saldo insuficiente' };
   if (!recipient.favorecido && value >= 5000) {
-    return { error: 'Transferência acima de R$ 5.000,00 só para favorecidos' };
+    return { error: 'Transferência acima de R$ 5.000,00 só para favorcideos' };
   }
   sender.saldo -= value;
   recipient.saldo += value;
