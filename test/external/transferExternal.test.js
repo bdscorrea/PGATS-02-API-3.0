@@ -6,7 +6,7 @@ const { expect } = require('chai');
 //testes
 describe('Transfer Controller External', () => {
     describe('POST /transfer', () => {
-        it('Quando recebo remetente e destinatário inexistentes recebo 400 e a mensagem de erro', async () => {
+        it('External: Usuário remetente ou destinatário não encontrado - 400', async () => {
             const resposta = await request('http://localhost:3000')
                 .post('/transfer')
                 .send({
