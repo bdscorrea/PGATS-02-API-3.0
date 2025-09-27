@@ -11,7 +11,7 @@ const transferService = require('../../services/transferService');
 //testes
 describe('Transfer Controller', () => {
     describe('POST /transfer', () => {
-        it('Quando recebo remetente e destinatário inexistentes recebo 400 e a mensagem de erro', async () => {
+        it('Usuário remetente ou destinatário não encontrado - 400', async () => {
             const resposta = await request(app)
                 .post('/transfer')
                 .send({
@@ -23,7 +23,7 @@ describe('Transfer Controller', () => {
         expect(resposta.body).to.have.property('error', 'Usuário remetente ou destinatário não encontrado');
         });
 
-        it('Usando Mocks: Quando recebo remetente e destinatário inexistentes recebo 400 e a mensagem de erro', async () => {
+        it('Usando Mocks: Usuário remetente ou destinatário não encontrado - 400', async () => {
             //mocar apenas a função transfers do Service
             const transferServiceMock = sinon.stub(transferService, 'transfer');
             transferServiceMock.returns({ error: 'Usuário remetente ou destinatário não encontrado' });
@@ -37,7 +37,8 @@ describe('Transfer Controller', () => {
                 });
             expect(resposta.status).to.equal(400);
             expect(resposta.body).to.have.property('error', 'Usuário remetente ou destinatário não encontrado');
-                   sinon.restore();
+            
+            sinon.restore();
         });
 
         it('Usando Mocks: Transferência realizada. - 201', async () => {
@@ -58,12 +59,19 @@ describe('Transfer Controller', () => {
                 });
 
             expect(resposta.status).to.equal(201);
-            expect(resposta.body).to.have.property('from', 'bea');
-            expect(resposta.body).to.have.property('to', 'bea');
-            expect(resposta.body).to.have.property('value', 100);
+            //Validação com um Fixture
+            const respostaEsperada = require('../fixture/respostas/quandoInformoValoresValidosEuTenhoSucessoCom201Created.json')
+                expect(resposta.body).to.deep.equal(respostaEsperada);
 
+            //um expert para comparar a Resposta.body com a String contida no arquivo 
+            //expect(resposta.body).to.have.property('from', 'bea');
+            //expect(resposta.body).to.have.property('to', 'bea');
+            //expect(resposta.body).to.have.property('value', 100);
+
+            //console.log(resposta.body)
+            
+            //RESETO O MMOCK
             sinon.restore();
-            console.log(resposta.body)
         });
 });
 });
