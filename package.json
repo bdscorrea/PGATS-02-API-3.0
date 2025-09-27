@@ -1,4 +1,15 @@
-{
+  {
+  "name": "pgats-03-api",
+  "version": "1.0.0",
+  "description": "API para testes e automação de transferências e usuários.",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha test/**/*.test.js --timeout 10000",
+    "test-external": "mocha test/external/**/*.test.js --timeout 10000",
+    "test-controller": "mocha test/controller/**/*.test.js --timeout 10000",
+    "start": "node server.js"
+  },
+
   "dependencies": {
     "chai": "^6.1.0",
     "express": "^5.1.0",
