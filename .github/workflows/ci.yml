@@ -18,6 +18,8 @@ jobs:
           node-version: '20'
 
           
+      - name: Instalar Mocha globalmente (alternativa)
+        run: npm install -g mocha
 
       - name: Executar testes
         run: npm test
