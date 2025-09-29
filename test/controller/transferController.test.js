@@ -12,15 +12,18 @@ const transferService = require('../../services/transferService');
 //testes
 describe('Transfer Controller', () => {
     describe('POST /transfer', () => {
-        it('Usuário remetente ou destinatário não encontrado - 400', async () => {
+        beforeEach(async () => {
             const respostaLogin = await request(app)
                     .post('/users/login')
                     .send({
                             username: 'teste1',
                              password: '12345'
-                            });
-                    const token = respostaLogin.body.token;
+                           });
+
+            token = respostaLogin.body.token;
+        });
         
+        it('Usuário remetente ou destinatário não encontrado - 400', async () => {
             const resposta = await request(app)
                 .post('/transfer')
                 .set('authorization', `Bearer ${token}`)
@@ -29,21 +32,12 @@ describe('Transfer Controller', () => {
                       to: "priscila",
                       value: 200
                     });
-            
-            console.log(token);
+    
         expect(resposta.status).to.equal(400);
         expect(resposta.body).to.have.property('error', 'Usuário remetente ou destinatário não encontrado');
         });
 
         it('Usando Mocks: Usuário remetente ou destinatário não encontrado - 400', async () => {
-            const respostaLogin = await request(app)
-                    .post('/users/login')
-                    .send({
-                            username: 'teste1',
-                             password: '12345'
-                            });
-                    const token = respostaLogin.body.token;
-
             //mocar apenas a função transfers do Service
             const transferServiceMock = sinon.stub(transferService, 'transfer');
             transferServiceMock.returns({ error: 'Usuário remetente ou destinatário não encontrado' });
@@ -64,14 +58,7 @@ describe('Transfer Controller', () => {
         });
 
         it('Usando Mocks: Transferência realizada. - 201', async () => {
-            const respostaLogin = await request(app)
-                    .post('/users/login')
-                    .send({
-                            username: 'teste1',
-                             password: '12345'
-                            });
-                    const token = respostaLogin.body.token;
-            //mocar apenas a função transfers do Service
+           //mocar apenas a função transfers do Service
             const transferServiceMock = sinon.stub(transferService, 'transfer');
             transferServiceMock.returns({ 
                 from: "teste1",
