@@ -1,14 +1,17 @@
+
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const userController = require('./controllers/userController');
 const transferController = require('./controllers/transferController');
+const authenticateToken = require('./middleware/authenticateToken');
 
 const app = express();
 app.use(express.json());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/users', userController);
-app.use('/transfer', transferController);
+app.use('/transfer', authenticateToken, transferController);
 
 module.exports = app;
+

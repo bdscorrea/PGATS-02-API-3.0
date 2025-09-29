@@ -25,4 +25,5 @@ jobs:
       - name: Esperar a API estar funcionando
         run: sleep 5
       - name: Run tests External
-        run: npm run test-external
+        run: npm run test-external 
+        
