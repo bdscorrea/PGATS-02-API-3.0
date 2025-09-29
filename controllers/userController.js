@@ -19,7 +19,7 @@ router.post('/login', (req, res) => {
   const result = userService.loginUser({ username, password });
   if (result.error) return res.status(401).json(result);
   const token = jwt.sign({ username: result.username }, JWT_SECRET, { expiresIn: '1h' });
-  res.json(result);
+  res.json({ user: result, token });
 });
 
 router.get('/', (req, res) => {

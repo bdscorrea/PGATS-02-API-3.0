@@ -2,7 +2,6 @@
 const request = require('supertest');
 const { expect } = require('chai');
 
-
 //testes
 describe('Transfer Controller External', () => {
     describe('POST /transfer', () => {
@@ -12,7 +11,7 @@ describe('Transfer Controller External', () => {
                 .post('/users/login')
                 .send({
                     username: 'teste1',
-                    password: '123'
+                    password: '12345'
                 });
                 const token = respostaLogin.body.token;
 
@@ -21,11 +20,11 @@ describe('Transfer Controller External', () => {
                 .post('/transfer')
                 .set('authorization', `Bearer ${token}`)
                 .send({
-                    from: "teste",
+                    from: "teste1",
                     to: "teste",
                     value: 100
                     });
-        
+        console.log(token);
         expect(resposta.status).to.equal(400);
         expect(resposta.body).to.have.property('error', 'Usuário remetente ou destinatário não encontrado')
     });
