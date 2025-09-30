@@ -52,7 +52,7 @@ Acesse [http://localhost:3000/api-docs](http://localhost:3000/api-docs) para vis
 
 ## GraphQL
 
-Rode `npm run start-graphql` para executar a API do GraphQL e acesse a URL http://localhost:4000/graphql para acessá-la.
+Rode `npm run stargraphql` t-para executar a API do GraphQL e acesse a URL http://localhost:4000/graphql para acessá-la.
 
 ### Types
 - `User`: username, favorecido, saldo
