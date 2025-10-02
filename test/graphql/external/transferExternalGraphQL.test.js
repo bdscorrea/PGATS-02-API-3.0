@@ -1,10 +1,10 @@
 //bibliotecas
 const request = require('supertest');
-const { expect } = require('chai');
+const { expect , use } = require('chai');
 const sinon = require('sinon');
-const app = require('../../../graphql/app');
-const transferService = require('../../../services/transferService');
-const { loginUser } = require('../../../services/userService');
+
+const chaiExclude = require('chai-exclude');
+use(chaiExclude);
 
 
       describe('Teste de Transferência GraphQL - External', () => {
@@ -19,80 +19,44 @@ const { loginUser } = require('../../../services/userService');
       });
           
   it('Usuário remetente ou destinatário não encontrado', async () => {
-
+    const transfer = require('../fixture/request/transferencia/transfer.json');
      const resErro = await request('http://localhost:4000/graphql')
       .post('')
       .set('authorization', `Bearer ${tokenGraphql}`)
-      .send({ 
-         query:  `
-      mutation Transfer($from: String!, $to: String!, $value: Float!) {
-            transfer(from: $from, to: $to, value: $value) {
-                  date
-                  from
-                  to
-                  value
-  }
-}
-`,
-        variables:  {
-            from: 'teste1',
-            to: 'usuarioInvalido',
-            value: 100
-        }
-  });
+      .send(transfer);
 
     expect(resErro.status).to.equal(200); // GraphQL sempre retorna 200, erro vai em errors
     expect(resErro.body.errors[0].message).to.include('Usuário remetente ou destinatário não encontrado');
   });
 
    it('Transferencia realizada com sucesso', async () => {
+    const validaarRespostaDaTransferencia = require('../fixture/respostas/transferencia/validaarRespostaDaTransferencia.json');
+    const transfer = require('../fixture/request/transferencia/transfer.json');
+    transfer.variables.to = "bea";
     const resTransfer = await request('http://localhost:4000/graphql')
       .post('')
       .set('authorization', `Bearer ${tokenGraphql}`)
-      .send({ 
-         query:  `
-      mutation Transfer($from: String!, $to: String!, $value: Float!) {
-            transfer(from: $from, to: $to, value: $value) {
-                  date
-                  from
-                  to
-                  value
-  }
-}
-`,
-        variables:  {
-            from: 'teste1',
-            to: 'bea',
-            value: 150
-        }
-  });
+      .send(transfer)
+
+
     expect(resTransfer.status).to.equal(200); // GraphQL sempre retorna 200, erro vai em errors
-    expect(resTransfer.body.data.transfer.from).to.equal('teste1');
+    expect(resTransfer.body.data.transfer)
+        .excluding('date')
+        .to.deep.equal(validaarRespostaDaTransferencia.data.transfer);
+
+        /* expect(resTransfer.body.data.transfer.from).to.equal('teste1');
     expect(resTransfer.body.data.transfer.to).to.equal('bea');
-    expect(resTransfer.body.data.transfer.value).to.equal(150);
+    expect(resTransfer.body.data.transfer.value).to.equal(100);*/
   });
 
    it('Saldo Insuficiente', async () => {
+    const transfer = require('../fixture/request/transferencia/transfer.json');
+    transfer.variables.value = 50000.22;
+    transfer.variables.to = "bea";
       const resSaldoInsuficiente = await request('http://localhost:4000/graphql')
       .post('')
       .set('authorization', `Bearer ${tokenGraphql}`)
-      .send({ 
-         query:  `
-      mutation Transfer($from: String!, $to: String!, $value: Float!) {
-            transfer(from: $from, to: $to, value: $value) {
-                  date
-                  from
-                  to
-                  value
-  }
-}
-`,
-        variables:  {
-            from: 'teste1',
-            to: 'bea',
-            value: 50000.22
-        }
-  });
+      .send(transfer);
 
     expect(resSaldoInsuficiente.status).to.equal(200); // GraphQL sempre retorna 200, erro vai em errors
     expect(resSaldoInsuficiente.body.errors[0].message).to.include('Saldo insuficiente');
