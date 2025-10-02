@@ -5,6 +5,8 @@ const sinon = require('sinon');
 const app = require('../../graphql/app');
 const transferService = require('../../services/transferService');
 
+
+
 //testes
 describe('Transfer Controller External', () => {
     describe('POST /transfer', () => {
@@ -63,24 +65,34 @@ describe('Transfer Controller External', () => {
             sinon.restore();
         });
 }); 
+
         //testes para a API GraphQL
         describe('GraphQL API', () => {
+          beforeEac(() => {
+            
+          }
+          )
   it('API GraphQL: Usuário remetente ou destinatário não encontrado', async () => {
+
     // Primeiro, obtenha o token
-    const loginMutation = `
+    const loginRes = await request('http://localhost:4000/graphql')
+      .post('/graphql')
+      .send({ 
+              query: `
       mutation {
         login(username: "teste1", password: "12345") {
           token
         }
       }
-    `;
-    const loginRes = await request('http://localhost:4000/graphql')
-      .post('/graphql')
-      .send({ query: loginMutation });
-    const token = loginRes.body.data.login.token;
+    `
+      });
+    const tokenGraphql = loginRes.body.data.login.token;
 
-    // Tenta transferir para usuário inválido
-    const transferMutation = `
+    const resErro = await request('http://localhost:4000/graphql')
+      .post('/graphql')
+      .set('authorization', `Bearer ${tokenGraphql}`)
+      .send({ 
+         query:  `
       mutation {
         transfer(from: "teste1", to: "usuarioInvalido", value: 100) {
           from
@@ -88,32 +100,33 @@ describe('Transfer Controller External', () => {
           value
         }
       }
-    `;
-    const res = await request('http://localhost:4000/graphql')
-      .post('/graphql')
-      .set('authorization', `Bearer ${token}`)
-      .send({ query: transferMutation });
+    `
+  });
 
-    expect(res.status).to.equal(200); // GraphQL sempre retorna 200, erro vai em errors
-    expect(res.body.errors[0].message).to.include('Usuário remetente ou destinatário não encontrado');
+    expect(resErro.status).to.equal(200); // GraphQL sempre retorna 200, erro vai em errors
+    expect(resErro.body.errors[0].message).to.include('Usuário remetente ou destinatário não encontrado');
   });
 
    it('API GraphQL: Transferencia realizada com sucesso', async () => {
     // Primeiro, obtenha o token
-    const loginMutation = `
+   const loginRes = await request('http://localhost:4000/graphql')
+      .post('/graphql')
+      .send({ query: 
+         `
       mutation {
         login(username: "teste1", password: "12345") {
           token
         }
       }
-    `;
-    const loginRes = await request('http://localhost:4000/graphql')
-      .post('/graphql')
-      .send({ query: loginMutation });
-    const token = loginRes.body.data.login.token;
+    `
+       });
+    const tokenGraphql = loginRes.body.data.login.token;
 
-    // Tenta transferir para usuário inválido
-    const transferMutation = `
+    const resTransfer = await request('http://localhost:4000/graphql')
+      .post('/graphql')
+      .set('authorization', `Bearer ${tokenGraphql}`)
+      .send({ query: 
+        `
       mutation {
         transfer(from: "teste1", to: "bea", value: 150) {
           from
@@ -121,50 +134,47 @@ describe('Transfer Controller External', () => {
           value
         }
       }
-    `;
-    const res = await request('http://localhost:4000/graphql')
-      .post('/graphql')
-      .set('authorization', `Bearer ${token}`)
-      .send({ query: transferMutation });
+    `
+       });
 
-    expect(res.status).to.equal(200); // GraphQL sempre retorna 200, erro vai em errors
-    expect(res.body.data.transfer.from).to.equal('teste1');
-    expect(res.body.data.transfer.to).to.equal('bea');
-    expect(res.body.data.transfer.value).to.equal(150);
+    expect(resTransfer.status).to.equal(200); // GraphQL sempre retorna 200, erro vai em errors
+    expect(resTransfer.body.data.transfer.from).to.equal('teste1');
+    expect(resTransfer.body.data.transfer.to).to.equal('bea');
+    expect(resTransfer.body.data.transfer.value).to.equal(150);
   });
 
    it('API GraphQL: Saldo Insuficiente', async () => {
-    // Primeiro, obtenha o token
-    const loginMutation = `
+    const loginRes = await request('http://localhost:4000/graphql')
+      .post('/graphql')
+      .send({ query: 
+        `
       mutation {
         login(username: "teste1", password: "12345") {
           token
         }
       }
-    `;
-    const loginRes = await request('http://localhost:4000/graphql')
-      .post('/graphql')
-      .send({ query: loginMutation });
-    const token = loginRes.body.data.login.token;
+    `
+       });
+    const tokenGraphql = loginRes.body.data.login.token;
 
-    // Tenta transferir para usuário inválido
-    const transferMutation = `
+
+    const resSaldoInsuficiente = await request('http://localhost:4000/graphql')
+      .post('/graphql')
+      .set('authorization', `Bearer ${tokenGraphql}`)
+      .send({ query: 
+        `
       mutation {
-        transfer(from: "teste1", to: "bea", value: 50000) {
+        transfer(from: "teste1", to: "bea", value: 50000.22) {
           from
           to
           value
         }
       }
-    `;
-    const res = await request('http://localhost:4000/graphql')
-      .post('/graphql')
-      .set('authorization', `Bearer ${token}`)
-      .send({ query: transferMutation });
+    `
+           });
 
-    expect(res.status).to.equal(200); // GraphQL sempre retorna 200, erro vai em errors
-     expect(res.body.errors[0].message).to.include('Saldo insuficiente');
-    
+    expect(resSaldoInsuficiente.status).to.equal(200); // GraphQL sempre retorna 200, erro vai em errors
+    expect(resSaldoInsuficiente.body.errors[0].message).to.include('Saldo insuficiente');
   });
 });
 });
