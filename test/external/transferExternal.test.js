@@ -68,10 +68,10 @@ describe('Transfer Controller External', () => {
 
         //testes para a API GraphQL
         describe('GraphQL API', () => {
-          beforeEac(() => {
-            
+          /*beforeEac(() => {
+
           }
-          )
+          )*/
   it('API GraphQL: Usuário remetente ou destinatário não encontrado', async () => {
 
     // Primeiro, obtenha o token
