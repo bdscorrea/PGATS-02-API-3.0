@@ -31,9 +31,9 @@ jobs:
 
       - name: Esperar a API estar funcionando
         run: sleep 5
-      - name: Run tests External-GraphQL
-        run: npm run test-graphql-external
-        
+      
       - name: Run tests External-Rest
         run: npm run test-rest-external         
+      - name: Run tests External-GraphQL
+        run: npm run test-graphql-external        
         
