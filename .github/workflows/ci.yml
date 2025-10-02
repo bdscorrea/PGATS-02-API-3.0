@@ -21,7 +21,7 @@ jobs:
       - name: Run tests Controller
         run: npm run test-controller
       - name: Start API Rest
-        run: npm start &
+        run: npm start-rest &
 
       - name: Start API GraphQL
         run: npm run start-graphql &
