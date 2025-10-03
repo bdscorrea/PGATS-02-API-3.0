@@ -6,12 +6,13 @@ const sinon = require('sinon');
 const chaiExclude = require('chai-exclude');
 use(chaiExclude);
 
+require('dotenv').config();
 
       describe('Teste de Transferência GraphQL - External', () => {
         
           before(async () => {
             const loginUser = require('../fixture/request/login/Login.json');
-            const loginRes = await request('http://localhost:4000/graphql')
+            const loginRes = await request(process.env.BASE_URL_GRAPHQL)
                 .post('')
                  .send(loginUser);
 
@@ -20,7 +21,7 @@ use(chaiExclude);
           
   it('Usuário remetente ou destinatário não encontrado', async () => {
     const transfer = require('../fixture/request/transferencia/transfer.json');
-     const resErro = await request('http://localhost:4000/graphql')
+     const resErro = await request(process.env.BASE_URL_GRAPHQL)
       .post('')
       .set('authorization', `Bearer ${tokenGraphql}`)
       .send(transfer);
@@ -33,7 +34,7 @@ use(chaiExclude);
     const validaarRespostaDaTransferencia = require('../fixture/respostas/transferencia/validaarRespostaDaTransferencia.json');
     const transfer = require('../fixture/request/transferencia/transfer.json');
     transfer.variables.to = "bea";
-    const resTransfer = await request('http://localhost:4000/graphql')
+    const resTransfer = await request(process.env.BASE_URL_GRAPHQL)
       .post('')
       .set('authorization', `Bearer ${tokenGraphql}`)
       .send(transfer)
@@ -53,7 +54,7 @@ use(chaiExclude);
     const transfer = require('../fixture/request/transferencia/transfer.json');
     transfer.variables.value = 50000.22;
     transfer.variables.to = "bea";
-      const resSaldoInsuficiente = await request('http://localhost:4000/graphql')
+      const resSaldoInsuficiente = await request(process.env.BASE_URL_GRAPHQL)
       .post('')
       .set('authorization', `Bearer ${tokenGraphql}`)
       .send(transfer);

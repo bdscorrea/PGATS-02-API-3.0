@@ -17,6 +17,9 @@ Esta API permite realizar operações de registro, login, consulta de usuários 
    npm install express@^4 @apollo/server@^4 @apollo/server-express4 jsonwebtoken bcryptjs
    ```
 
+ ## Configuração
+   Antes de seguir, crie um arquivo .env na pasta raiz contendo as propriedades BASE_URL_REST e BASE_URL_GRAPHQL com a URL desses serviços
+
 ## Estrutura de Diretórios
 - `controllers/` - Lógica das rotas REST
 - `services/` - Regras de negócio

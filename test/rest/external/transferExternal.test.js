@@ -3,6 +3,7 @@ const request = require('supertest');
 const { expect } = require('chai');
 const sinon = require('sinon');
 const transferService = require('../../../services/transferService');
+require('dotenv').config();
 
 
 
@@ -10,7 +11,7 @@ const transferService = require('../../../services/transferService');
 console.log("\n");
 describe('Teste de Transferência Rest - External', () => {
     beforeEach(async () => {
-            const respostaLogin = await request('http://localhost:3000')
+            const respostaLogin = await request(process.env.BASE_URL_REST)
                     .post('/users/login')
                     .send({
                             username: 'teste1',
@@ -22,7 +23,7 @@ describe('Teste de Transferência Rest - External', () => {
         it('Usuário remetente ou destinatário não encontrado - 400', async () => {
                 
             //2- realizar a transferência
-            const resposta = await request('http://localhost:3000')
+            const resposta = await request(process.env.BASE_URL_REST)
                 .post('/transfer')
                 .set('authorization', `Bearer ${token}`)
                 .send({
@@ -44,7 +45,7 @@ describe('Teste de Transferência Rest - External', () => {
                 date: new Date().toISOString()
             });
 
-            const resposta = await request('http://localhost:3000')
+            const resposta = await request(process.env.BASE_URL_REST)
                 .post('/transfer')
                 .set('authorization', `Bearer ${token}`)
                 .send({
